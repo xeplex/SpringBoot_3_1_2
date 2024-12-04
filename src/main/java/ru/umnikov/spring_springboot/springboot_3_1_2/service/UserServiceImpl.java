@@ -4,7 +4,7 @@ package ru.umnikov.spring_springboot.springboot_3_1_2.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.umnikov.spring_springboot.springboot_3_1_2.dao.UserDao;
+import ru.umnikov.spring_springboot.springboot_3_1_2.dao.UserRepository;
 import ru.umnikov.spring_springboot.springboot_3_1_2.model.User;
 
 
@@ -13,40 +13,42 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao) {
-        this.userDao = userDao;
+    public UserServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    @Transactional(readOnly = true)
     @Override
     public List<User> getAll() {
-        return userDao.getAll();
+        return userRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
     @Override
     public User getById(int id) {
-        return userDao.getById(id);
+        return userRepository.findById(id).isPresent() ?
+                userRepository.findById(id).get() :
+                null;
     }
 
-    @Transactional
     @Override
     public void save(User user) {
-        userDao.save(user);
+        userRepository.save(user);
     }
 
-    @Transactional
     @Override
     public void delete(int id) {
-        userDao.delete(id);
+        userRepository.deleteById(id);
     }
 
-    @Transactional
     @Override
     public void update(User user, int id) {
-        userDao.update(user, id);
+        User existingUser = getById(id);
+        existingUser.setName(user.getName());
+        existingUser.setSurname(user.getSurname());
+        existingUser.setBirthYear(user.getBirthYear());
+        existingUser.setHeight(user.getHeight());
+        existingUser.setWeight(user.getWeight());
     }
 }
