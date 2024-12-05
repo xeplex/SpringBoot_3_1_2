@@ -55,5 +55,6 @@ public class UserServiceImpl implements UserService {
         existingUser.setBirthYear(user.getBirthYear());
         existingUser.setHeight(user.getHeight());
         existingUser.setWeight(user.getWeight());
+        userRepository.save(existingUser);
     }
 }
